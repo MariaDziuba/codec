@@ -19,10 +19,9 @@ from src.utils import (PerceptualLoss, display_images_and_save_pdf,
 
 tqdm.pandas()
 
-os.environ["WANDB_PROJECT"] = "codec_ITMO"
+os.environ["WANDB_PROJECT"] = "default"
 
 import os
-
 
 @click.command()
 @click.option("--config_file", default="config.yaml", help="Path to config YAML file")
@@ -34,6 +33,7 @@ def main(config_file):
         project=os.getenv("WANDB_PROJECT"),
         config=args_config,
         name=args_config["training_args"]["run_name"],
+        mode="disabled"
     )
     set_random_seed(args_config["training_args"]["seed"])
 
@@ -60,6 +60,7 @@ def main(config_file):
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    loss_type = args_config["training_args"]["loss"]
 
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -78,7 +79,13 @@ def main(config_file):
             optimizer.zero_grad()
 
             outputs = model(train_batch, b_t=b_t)
-            loss = nn.MSELoss()(outputs, train_batch)
+            if loss_type == "l1":
+                loss = nn.L1Loss()(outputs, train_batch)
+                # mse_loss = loss_metric(outputs, images)
+                # kl_loss = sparse_loss(autoencoder, images)
+                # loss = mse_loss + kl_loss * SPARSE_REG
+            else:
+                loss = nn.MSELoss()(outputs, train_batch)
             if use_aux_loss:
                 aux_loss = AUX_Loss(outputs, train_batch)
                 loss += aux_lambda * aux_loss

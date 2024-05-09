@@ -9,11 +9,13 @@ class ResidualBlock(nn.Module):
         super(ResidualBlock, self).__init__()
         self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.gelu = nn.GELU()
+        self.bn = nn.BatchNorm2d(channels)
         self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
 
     def forward(self, x):
         residual = x
         out = self.gelu(self.conv1(x))
+        out = self.bn(out)
         out = self.conv2(out)
         out += residual
         return out
@@ -24,11 +26,18 @@ class ResAutoEncoder(BaseModel):
         self.encoder = nn.Sequential(
             nn.Conv2d(3, 128, kernel_size=7, padding=3, stride=2),
             nn.GELU(),
+            nn.BatchNorm2d(128),
             ResidualBlock(128),
-            nn.Conv2d(128, 32, kernel_size=5, padding=2, stride=2),
+            nn.Conv2d(128, 64, kernel_size=5, padding=2, stride=2),
             nn.GELU(),
+            nn.BatchNorm2d(64),
+            ResidualBlock(64),
+            nn.Conv2d(64, 32, kernel_size=3, padding=1, stride=2),
+            nn.GELU(),
+            nn.BatchNorm2d(32),
             ResidualBlock(32),
             nn.Conv2d(32, 16, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(16),
             nn.GELU(),
         )
 
@@ -38,15 +47,24 @@ class ResAutoEncoder(BaseModel):
                 16, 32, kernel_size=3, stride=2, padding=1, output_padding=1
             ),
             nn.GELU(),
+            nn.BatchNorm2d(32),
             ResidualBlock(32),
             nn.ConvTranspose2d(
-                32, 128, kernel_size=5, stride=2, padding=2, output_padding=1
+                32, 64, kernel_size=3, stride=2, padding=1, output_padding=1
             ),
             nn.GELU(),
+            nn.BatchNorm2d(64),
+            ResidualBlock(64),
+            nn.ConvTranspose2d(
+                64, 128, kernel_size=5, stride=2, padding=2, output_padding=1
+            ),
+            nn.GELU(),
+            nn.BatchNorm2d(128),
             ResidualBlock(128),
             nn.ConvTranspose2d(
                 128, 3, kernel_size=7, stride=2, padding=3, output_padding=1
             ),
+            nn.BatchNorm2d(3),
             nn.Sigmoid(),
         )
 
@@ -55,7 +73,7 @@ class ResAutoEncoder(BaseModel):
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
-                nn.init.xavier_uniform_(m.weight)
+                nn.init.kaiming_uniform_(m.weight)
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
 

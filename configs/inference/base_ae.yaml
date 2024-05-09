@@ -1,12 +1,12 @@
 model:
-  type: base_ae
-  model_name: base_ae
+  type: base_ae_no_maxpool_v2
+  model_name: base_ae_no_maxpool_v2
   model_kwargs:
 
 data_path: ./test
 
 seed: 42
-model_dir: ./artifacts/base_ae-b_2-lr_3e04-b_s_128/epoch_2999
+model_dir: ./artifacts/base_ae_no_maxpool_v2-b_2-lr_3e04/epoch_2999
 batch_size: 64
-output_filename: ./artifacts/base_ae-b_2-lr_3e04-b_s_128/epoch_2999/base_ae-b_2-lr_3e04-b_s_128.pdf
+output_filename: ./artifacts/base_ae_no_maxpool_v2-b_2-lr_3e04/epoch_2999/base_ae_leaky_relu-b_2-lr_3e04.pdf
 b: 2

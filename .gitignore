@@ -1,1 +1,7 @@
 artifacts
+__pycache__
+.ipynb_checkpoints
+src.egg-info/
+.DS_Store
+EntropyCodec.cpython-310-x86_64-linux-gnu.so
+build/

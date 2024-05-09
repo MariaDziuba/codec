@@ -164,7 +164,10 @@ def display_images_and_save_pdf(test_dataset, imgs_decoded, imgsQ_decoded, bpp, 
         jpeg_img, JPEGQP, JPEGrealbpp, JPEGrealpsnr = JPEGRDSingleImage(test_dataset[i], bpp[i])
         psnr_jpeg.append(JPEGrealpsnr)
         plt.subplot(rows, cols, 3 * cols + i + 1)
-        plt.imshow(jpeg_img, interpolation="nearest")
+        try:
+            plt.imshow(jpeg_img, interpolation="nearest")
+        except:
+            pass
         plt.title(f"PSNR: {JPEGrealpsnr:.2f} | BPP: {JPEGrealbpp:.2f}", fontsize=10)
         plt.axis('off')
 

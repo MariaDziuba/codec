@@ -15,8 +15,7 @@ training_args:
   learning_rate: 3.0e-04
   eval_epochs: 20
   output_dir: ./artifacts
-  run_name: residual_ae-b_2-lr_3e04-b_s_2
+  loss: "l1"
+  run_name: residual_ae_ext-b_2-lr_3e04-b_s_2
   b_t: 2
   b: 2
-  use_aux_loss: true
-  aux_lambda: 0.3

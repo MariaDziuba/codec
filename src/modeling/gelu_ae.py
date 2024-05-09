@@ -12,8 +12,10 @@ class GELUAutoEncoder(BaseModel):
         self.encoder = nn.Sequential(
             nn.Conv2d(3, 128, kernel_size=7, padding=3, stride=2),
             nn.GELU(),
+            nn.BatchNorm2d(128),
             nn.Conv2d(128, 32, kernel_size=5, padding=2, stride=2),
             nn.GELU(),
+            nn.BatchNorm2d(32),
             nn.Conv2d(32, 16, kernel_size=3, padding=1, stride=2),
             nn.GELU(),
         )
@@ -23,24 +25,17 @@ class GELUAutoEncoder(BaseModel):
                 16, 32, kernel_size=3, stride=2, padding=1, output_padding=1
             ),
             nn.GELU(),
+            nn.BatchNorm2d(32),
             nn.ConvTranspose2d(
                 32, 128, kernel_size=5, stride=2, padding=2, output_padding=1
             ),
             nn.GELU(),
+            nn.BatchNorm2d(128),
             nn.ConvTranspose2d(
                 128, 3, kernel_size=7, stride=2, padding=3, output_padding=1
             ),
             nn.Sigmoid(),
         )
-
-        self._initialize_weights()
-
-    def _initialize_weights(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
-                nn.init.xavier_uniform_(m.weight)
-                if m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
 
     def forward(self, x, b_t=None):
         x = self.encoder(x)

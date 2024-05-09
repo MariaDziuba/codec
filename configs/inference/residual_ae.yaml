@@ -6,7 +6,7 @@ model:
 data_path: ./test
 
 seed: 42
-model_dir: ./artifacts/residual_ae-b_2-lr_3e04-b_s_2/epoch_139
+model_dir: ./artifacts/residual_ae_ext-b_2-lr_3e04-b_s_2/epoch_199
 batch_size: 64
-output_filename: ./artifacts/residual_ae-b_2-lr_3e04-b_s_2/epoch_139/residual_ae-b_2-lr_3e04-b_s_2.pdf
+output_filename: ./artifacts/residual_ae_ext-b_2-lr_3e04-b_s_2/epoch_199/residual_ae_ext-b_2-lr_3e04-b_s_2.pdf
 b: 2
